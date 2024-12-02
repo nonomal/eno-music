@@ -1,9 +1,11 @@
 <script setup>
 import { useInfiniteScroll } from '@vueuse/core'
-import { useBlblStore } from '../blbl/store.js'
-import SongItem from '../components/SongItem.vue'
-import { getUserArc } from '../api'
-import { usePlaylistStore } from './store'
+
+import SongItem from '~/options/components/SongItem.vue'
+import { getUserArc } from '~/options/api'
+
+import { useBlblStore } from '~/options/blbl/store.ts'
+import { usePlaylistStore } from '~/options/playlist/store'
 import Loading from '~/components/loading/index.vue'
 
 const PLstore = usePlaylistStore()
@@ -55,10 +57,13 @@ function getSongs(params) {
     }))
     page.value = c_page
     songListByPage.value[c_page.pn] = videoList
+  }).finally(() => {
+    loading.value = false
   })
 }
 
 watch(() => PLstore.currentSinger, (mid) => {
+  PLstore.fetchSingerInfo(mid, false)
   songListByPage.value = {}
   getSongs({ mid })
 })

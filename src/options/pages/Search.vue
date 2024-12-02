@@ -2,8 +2,9 @@
 import { ref } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import cn from 'classnames'
-import SongItem from '../components/SongItem.vue'
-import AddCollection from '../playlist/AddCollection.vue'
+
+import AddCollection from '~/options/playlist/AddCollection.vue'
+import SongItem from '~/options/components/SongItem.vue'
 import { useApiClient } from '~/composables/api'
 import Loading from '~/components/loading/index.vue'
 
@@ -52,6 +53,7 @@ async function getMoreData() {
       duration: item.duration,
       bvid: item.bvid,
       pages: item.pages,
+      mid: item.mid,
     }
   })
 }
@@ -75,6 +77,7 @@ async function handleSearch() {
       duration: item.duration,
       bvid: item.bvid,
       pages: item.pages,
+      mid: item.mid,
     }
 
     result.value = [searchSong]

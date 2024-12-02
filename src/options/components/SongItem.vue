@@ -1,7 +1,7 @@
 <script setup>
 import { computed, defineProps } from 'vue'
 import cn from 'classnames'
-import { useBlblStore } from '../blbl/store.js'
+import { useBlblStore } from '../blbl/store.ts'
 import { usePlaylistStore } from '../playlist/store.ts'
 import { useApiClient } from '~/composables/api'
 import Message from '~/components/message'
@@ -46,7 +46,7 @@ const store = useBlblStore()
 const PLstore = usePlaylistStore()
 
 const { later, del, star, checkPages } = props
-const { cover, title, author, pages } = props.song
+const { cover, title, author, pages, mid } = props.song
 
 const isPlaying = computed(() => {
   if (!props.showActive)
@@ -115,6 +115,13 @@ function addToLater() {
     message: '已添加到稍后再听',
   })
 }
+
+function handleSingerDetail(singerMid) {
+  if (!singerMid)
+    return
+  store.mode = 'singerDetail'
+  PLstore.currentSinger = singerMid
+}
 </script>
 
 <template>
@@ -128,7 +135,8 @@ function addToLater() {
           <span v-if="isPlaying">
             <div class="i-svg-spinners:bars-scale w-1em h-1em text-[#fffb00]" />
           </span>
-          <span class="text-xs opacity-50">
+          <!-- {{ JSON.stringify(song) }} -->
+          <span class="text-xs opacity-50 hover:border-b-2 border-gray-200" @click.stop="handleSingerDetail(mid)">
             {{ author }}
           </span>
         </div>
