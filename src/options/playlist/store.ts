@@ -23,8 +23,8 @@ export const defaultSingers = [
   '210752', // 真栗
   '37754047', // 咻咻满
   '20473341', // 一直在吃的周梓琦
-  // '1839002753', // 鹿火
-  // '98573631', // 鹿小草
+  '1839002753', // 鹿火
+  '98573631', // 鹿小草
 ]
 
 export const usePlaylistStore = defineStore({
@@ -46,6 +46,11 @@ export const usePlaylistStore = defineStore({
     openCollection: false,
     collectionInfo: {} as object,
     collectionSongs: [] as song[],
+    // 歌单海报
+    isShowPoster: false,
+    posters: [] as string[],
+    // 用户权限,取决于是否关注了开发者
+    userPermission: false,
   }),
   actions: {
     startAddSong(song: song) {
@@ -111,6 +116,11 @@ export const usePlaylistStore = defineStore({
     addSinger(mid: string) {
       this.singers.push(mid)
       this.fetchSingerInfo(mid, false)
+    },
+    initUserPermission() {
+      api.blbl.getUserInfo({ mid: '184327681' }).then((res) => {
+        this.userPermission = res.data.mid === '184327681' || res.data.following
+      })
     },
     removeSinger(mid: string) {
       const index = this.singers.findIndex(s => s === mid)

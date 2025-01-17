@@ -71,6 +71,10 @@ function handlePlayUser() {
   store.playList = renderList.value
   store.play = renderList.value[0]
 }
+function startExportPoster() {
+  PLstore.isShowPoster = true
+  PLstore.posters = renderList.value.map(item => item.cover)
+}
 </script>
 
 <template>
@@ -94,6 +98,11 @@ function handlePlayUser() {
           <a :href="`https://space.bilibili.com/${PLstore.currentSinger}`" target="_blank">
             <div class="i-mingcute:link-line w-1em h-1em cursor-pointer" />
           </a>
+          <!-- 打开海报生成按钮 -->
+
+          <div class="text-bold text-lg cursor-pointer" @click="startExportPoster">
+            制作歌单海报
+          </div>
           <!-- <div class="i-mingcute:share-3-line w-1em h-1em cursor-pointer" /> -->
         </div>
       </div>
