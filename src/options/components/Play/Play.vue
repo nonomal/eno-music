@@ -1,16 +1,24 @@
 <script setup>
+import { onMounted } from 'vue'
+// 第三方库
 import { useLocalStorage } from '@vueuse/core'
 import { Howl } from 'howler'
 import cn from 'classnames'
+
+// 组件
 import SongItem from '../SongItem.vue'
+
+// store
 import { VIDEO_MODE, useBlblStore } from '../../blbl/store'
 import { usePlaylistStore } from '../../playlist/store.ts'
 import { EQService, useEqStore } from '../Eq/store'
-import LoopSwitch from './LoopSwitch.vue'
-import useControl from './keys'
 import Video from './video.vue'
-import { useApiClient } from '~/composables/api'
+import LoopSwitch from './LoopSwitch.vue'
+
+// hooks & utils
+import useControl from './keys'
 import NewDrawer from '~/components/drawer/drawer.vue'
+import { useApiClient } from '~/composables/api'
 import { download } from '~/options/utils.ts'
 
 const PLstore = usePlaylistStore()
@@ -18,6 +26,14 @@ const eqStore = useEqStore()
 const store = useBlblStore()
 
 const api = useApiClient()
+
+onMounted(() => {
+  // 注册系统媒体会话
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('previoustrack', () => change('prev'))
+    navigator.mediaSession.setActionHandler('nexttrack', () => change('next'))
+  }
+})
 
 function getUpUrl(obj) {
   const url1 = obj.baseUrl || ''
@@ -84,6 +100,16 @@ function initMusic() {
   if (index !== historyList.value.at(-1)) {
     historyList.value.push(index)
   }
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: store.play.title,
+      artist: store.play.author,
+      album: store.play.album,
+      artwork: [{ src: store.play.cover }],
+    })
+  }
+
   store.howl = new Howl({
     src: [url],
     html5: true,
