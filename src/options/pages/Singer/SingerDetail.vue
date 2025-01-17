@@ -1,9 +1,11 @@
 <script setup>
 import { useInfiniteScroll } from '@vueuse/core'
-import { useBlblStore } from '../blbl/store.js'
-import SongItem from '../components/SongItem.vue'
-import { getUserArc } from '../api'
-import { usePlaylistStore } from './store'
+
+import SongItem from '~/options/components/SongItem.vue'
+import { getUserArc } from '~/options/api'
+
+import { useBlblStore } from '~/options/blbl/store.ts'
+import { usePlaylistStore } from '~/options/playlist/store'
 import Loading from '~/components/loading/index.vue'
 
 const PLstore = usePlaylistStore()
@@ -55,16 +57,23 @@ function getSongs(params) {
     }))
     page.value = c_page
     songListByPage.value[c_page.pn] = videoList
+  }).finally(() => {
+    loading.value = false
   })
 }
 
 watch(() => PLstore.currentSinger, (mid) => {
+  PLstore.fetchSingerInfo(mid, false)
   songListByPage.value = {}
   getSongs({ mid })
 })
 function handlePlayUser() {
   store.playList = renderList.value
   store.play = renderList.value[0]
+}
+function startExportPoster() {
+  PLstore.isShowPoster = true
+  PLstore.posters = renderList.value.map(item => item.cover)
 }
 </script>
 
@@ -89,6 +98,11 @@ function handlePlayUser() {
           <a :href="`https://space.bilibili.com/${PLstore.currentSinger}`" target="_blank">
             <div class="i-mingcute:link-line w-1em h-1em cursor-pointer" />
           </a>
+          <!-- 打开海报生成按钮 -->
+
+          <div class="text-bold text-lg cursor-pointer" @click="startExportPoster">
+            制作歌单海报
+          </div>
           <!-- <div class="i-mingcute:share-3-line w-1em h-1em cursor-pointer" /> -->
         </div>
       </div>

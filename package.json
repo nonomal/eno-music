@@ -1,7 +1,7 @@
 {
   "name": "enu-music",
   "displayName": "ENO-M",
-  "version": "2.1.5",
+  "version": "4.0.1",
   "private": true,
   "packageManager": "pnpm@8.15.4",
   "description": "A music player extension for Chrome",
@@ -28,11 +28,16 @@
     "test": "vitest test",
     "test:e2e": "playwright test",
     "postinstall": "simple-git-hooks",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "release:major": "release-it major",
+    "release:minor": "release-it minor",
+    "release:patch": "release-it patch"
   },
   "dependencies": {
     "@meanc/webext-fetch": "^0.0.3",
     "@types/chrome": "^0.0.270",
+    "@types/howler": "^2.2.12",
+    "@types/lodash": "^4.17.13",
     "@vueuse/math": "^10.11.0",
     "browser-id3-writer": "^6.1.0",
     "classnames": "^2.5.1",

@@ -1,24 +1,35 @@
 <!-- eslint-disable no-console -->
 <script setup>
+// 第三方库
 import { useLocalStorage } from '@vueuse/core'
 
+// 组件
 import Play from './components/Play/Play.vue'
 import Sider from './components/Sider.vue'
+import WallpaperGen from './components/wallpaper-gen/index.vue'
+
+// 播放列表相关
 import Playlist from './playlist/index.vue'
-import ListenLater from './playlist/ListenLater.vue'
 import AddSong from './playlist/AddSong.vue'
-import About from './components/About.vue'
 
-import Search from './blbl/Search.vue'
-import SingerList from './playlist/SingerList.vue'
-import SingerDetail from './playlist/SingerDetail.vue'
+// 页面
+import About from './pages/About.vue'
+import Setting from './pages/Setting.vue'
+import Home from './pages/Home/index.vue'
+import Search from './pages/Search.vue'
+import ListenLater from './pages/ListenLater.vue'
+import SingerList from './pages/Singer/SingerList.vue'
+import SingerDetail from './pages/Singer/SingerDetail.vue'
 
-import Home from './blbl/Home.vue'
-
-import { useBlblStore } from './blbl/store.js'
+// API 和 Store
+import { useBlblStore } from './blbl/store.ts'
+import { usePlaylistStore } from './playlist/store'
+import { getUserInfo } from './api'
 
 const store = useBlblStore()
+const PLstore = usePlaylistStore()
 const CST = useLocalStorage('cookieSetTime', 0)
+const userInfo = ref({})
 
 function getCookie() {
   // 这部分暂时不删除, 调试太麻烦
@@ -67,23 +78,28 @@ function getBLCookie() {
 
 onMounted(() => {
   getBLCookie()
+  PLstore.initUserPermission()
   // 每天获取一次cookie就可以
   if (Date.now() - CST.value > 24 * 60 * 60 * 1000) {
     CST.value = Date.now()
     getCookie()
   }
+  getUserInfo().then((res) => {
+    userInfo.value = res.data
+  })
 })
+provide('userInfo', userInfo)
 </script>
 
 <template>
   <main
     class="
     bg-$eno-bg
-    color-$eno-text-1" h-screen w-screen overflow="auto" flex
+    color-$eno-text-1 no-scroll" h-screen w-screen overflow="hidden" flex
   >
     <AddSong />
     <Sider />
-    <div class="grow-1 shrink-10 fadeInWrapper">
+    <div class="grow-1 shrink-10 h-screen fadeInWrapper">
       <Home v-show="store.mode === 'home'" />
       <Search v-show="store.mode === 'search'" />
       <Playlist v-show="store.mode === 'playlist'" />
@@ -91,19 +107,46 @@ onMounted(() => {
       <SingerList v-show="store.mode === 'singerList'" />
       <SingerDetail v-show="store.mode === 'singerDetail'" />
       <About v-show="store.mode === 'about'" />
+      <Setting v-show="store.mode === 'setting'" />
     </div>
     <Play />
+    <WallpaperGen />
   </main>
 </template>
 
 <style>
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: none;  /* 防止滚动链接/弹性效果 */
+  touch-action: none;         /* 防止移动端的触摸滚动 */
+  -webkit-overflow-scrolling: auto;  /* 禁用 iOS 的弹性滚动 */
+  position: fixed;            /* 可选：完全固定位置 */
+  width: 100%;
+  height: 100%;
+}
 html {
   background: #000;
 }
 
 *::-webkit-scrollbar {
-  display: none;
-}
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 3px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    background: #333;
+    border-radius: 3px;
+
+    &:hover {
+      background: #444;
+    }
+  }
 
 img {
   position: relative;
