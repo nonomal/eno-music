@@ -5,6 +5,7 @@ const props = defineProps<{
   open: boolean
   title: string
   position: 'top' | 'right' | 'bottom' | 'left'
+  class: string
 }>()
 const emit = defineEmits(['visibleChange'])
 const drawerRef = ref<HTMLDialogElement>()
@@ -44,7 +45,7 @@ function clickDialog(e: MouseEvent) {
     <Transition :name="transitionName">
       <dialog
         v-show="open" ref="drawerRef"
-        :class="cn('text-white backdrop-blur grid grid-rows-[3rem_1fr] bg-transparent', {
+        :class="cn(`${props.class} text-white backdrop-blur grid grid-rows-[3rem_1fr] bg-transparent`, {
           'w-screen min-h-[10vh] max-h-[100vh]': !isLR,
           'h-[100vh+4rem] min-w-100 max-w-[100vw]': isLR,
           'translate-x-[-100%] ml-[100vw]': props.position === 'right',
@@ -60,7 +61,7 @@ function clickDialog(e: MouseEvent) {
           transition-delay-300 hover:transform-rotate-90 cursor-pointer" @click.stop="close"
           />
         </div>
-        <div class="h-full overflow-y-auto">
+        <div class="max-h-[100%-3rem] overflow-y-auto">
           <slot />
         </div>
       </dialog>

@@ -1,22 +1,39 @@
 <script setup>
+import { onMounted } from 'vue'
+// 第三方库
 import { useLocalStorage } from '@vueuse/core'
 import { Howl } from 'howler'
 import cn from 'classnames'
+
+// 组件
 import SongItem from '../SongItem.vue'
+import ShareCard from '../sharecard/index.vue'
+// store
 import { VIDEO_MODE, useBlblStore } from '../../blbl/store'
 import { usePlaylistStore } from '../../playlist/store.ts'
-import LoopSwitch from './LoopSwitch.vue'
-import useControl from './keys'
+import { EQService, useEqStore } from '../Eq/store'
 import Video from './video.vue'
-import { useApiClient } from '~/composables/api'
-import Dialog from '~/components/dialog/index.vue'
-import Drawer from '~/components/drawer/index.vue'
+import LoopSwitch from './LoopSwitch.vue'
+
+// hooks & utils
+import useControl from './keys'
 import NewDrawer from '~/components/drawer/drawer.vue'
+import { useApiClient } from '~/composables/api'
 import { download } from '~/options/utils.ts'
 
 const PLstore = usePlaylistStore()
+const eqStore = useEqStore()
+const store = useBlblStore()
 
 const api = useApiClient()
+
+onMounted(() => {
+  // 注册系统媒体会话
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('previoustrack', () => change('prev'))
+    navigator.mediaSession.setActionHandler('nexttrack', () => change('next'))
+  }
+})
 
 function getUpUrl(obj) {
   const url1 = obj.baseUrl || ''
@@ -28,7 +45,6 @@ function getUpUrl(obj) {
   return urlList[0] || url1
 }
 
-const store = useBlblStore()
 const isPlaying = ref(false)
 const showList = ref(false)
 const historyList = ref([])
@@ -84,6 +100,16 @@ function initMusic() {
   if (index !== historyList.value.at(-1)) {
     historyList.value.push(index)
   }
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: store.play.title,
+      artist: store.play.author,
+      album: store.play.album,
+      artwork: [{ src: store.play.cover }],
+    })
+  }
+
   store.howl = new Howl({
     src: [url],
     html5: true,
@@ -273,6 +299,17 @@ function openBlTab() {
 function changeVideoMode() {
   store.videoMode = store.videoMode === VIDEO_MODE.FLOATING ? VIDEO_MODE.DRAWER : VIDEO_MODE.FLOATING
 }
+// 初始化eq
+watch(() => store.howl, () => {
+  if (store.howl) {
+    store.eqService = new EQService()
+  }
+})
+watch(() => eqStore.currentPreset, () => {
+  if (store.eqService) {
+    store.eqService.updateFilters(eqStore.values)
+  }
+})
 </script>
 
 <template>
@@ -346,6 +383,7 @@ function changeVideoMode() {
           <div hidden class="i-mingcute:download-3-fill w-1em h-1em cursor-pointer" @click.stop="download(store.play)" />
           <div class="i-mingcute:star-fill w-1em h-1em cursor-pointer" @click.stop="PLstore.startAddSong(store.play)" />
           <div class="i-mingcute:information-fill w-1em h-1em cursor-pointer" @click.stop="openBlTab" />
+          <ShareCard />
         </div>
       </div>
       <!-- 其他 -->
