@@ -36,7 +36,7 @@ const hasFooter = computed(() => !!slots.footer)
 <template>
   <Teleport to="body">
     <dialog
-      v-show="open" ref="dialogRef" class="bg-$eno-elevated backdrop-blur p-3 rounded-lg h-[50vh] min-w-1/3 w-1/2
+      v-show="open" ref="dialogRef" class="bg-$eno-elevated backdrop-blur p-3 rounded-lg min-h-[50vh] min-w-1/3 w-1/2
         text-white fadeItem
       " @click="clickDialog"
     >

@@ -7,7 +7,7 @@ import cn from 'classnames'
 
 // 组件
 import SongItem from '../SongItem.vue'
-
+import ShareCard from '../sharecard/index.vue'
 // store
 import { VIDEO_MODE, useBlblStore } from '../../blbl/store'
 import { usePlaylistStore } from '../../playlist/store.ts'
@@ -383,6 +383,7 @@ watch(() => eqStore.currentPreset, () => {
           <div hidden class="i-mingcute:download-3-fill w-1em h-1em cursor-pointer" @click.stop="download(store.play)" />
           <div class="i-mingcute:star-fill w-1em h-1em cursor-pointer" @click.stop="PLstore.startAddSong(store.play)" />
           <div class="i-mingcute:information-fill w-1em h-1em cursor-pointer" @click.stop="openBlTab" />
+          <ShareCard />
         </div>
       </div>
       <!-- 其他 -->
