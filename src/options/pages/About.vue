@@ -5,14 +5,13 @@ const btn = 'flex items-center gap-1 text-[14px] py-1 border-[#FACC15] border-l-
 </script>
 
 <template>
-  <section class="w-full h-screen overflow-auto py-30 pt-10">
+  <section class="w-full h-screen overflow-auto pb-30">
     <!-- logo -->
-    <div class="bg-$eno-fill-4 p-5 rounded-3 w-160 flex flex-col gap-1 mx-auto">
-      <div class="text-3xl text-bold mb-1 flex">
+    <div class="p-5 flex flex-col gap-1 mx-auto">
+      <!-- <div class="text-3xl text-bold mb-1 flex">
         Logo
       </div>
-      <img :src="Logo" alt="logo" class="w-[100px] object-contain">
-
+      <img :src="Logo" alt="logo" class="w-[100px] object-contain"> -->
       <!-- 联系方式 -->
       <div class="text-3xl text-bold mb-1">
         Connect

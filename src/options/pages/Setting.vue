@@ -60,6 +60,17 @@ async function importData() {
     })
   }
 }
+
+// function switchTheme() {
+//   // 切换暗黑模式
+//   document.documentElement.classList.toggle('dark')
+// }
+
+// function toggleTheme() {
+//   if (!document.startViewTransition)
+//     switchTheme()
+//   document.startViewTransition(switchTheme)
+// }
 </script>
 
 <template>
@@ -73,6 +84,10 @@ async function importData() {
         <span class="i-tabler:upload w-1em h-1em" />
         导入数据
       </div>
+      <!-- <div class="flex items-center gap-2 text-lg cursor-pointer rounded-2 p-2 px-5 bg-$eno-fill-4 hover:bg-$eno-fill-2 duration-150" @click="toggleTheme">
+        <span class="i-tabler:sun-moon w-1em h-1em" />
+        切换主题
+      </div> -->
     </div>
     <div class="mt-4 text-sm text-$eno-text-2">
       <!-- desc -->
